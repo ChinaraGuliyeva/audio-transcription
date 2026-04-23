@@ -1,0 +1,1 @@
+A script for transcribing audio to text. Needs ffmpeg

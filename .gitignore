@@ -1,0 +1,4 @@
+temp_audio/
+.vscode/
+__pycache__/
+*.pyc
