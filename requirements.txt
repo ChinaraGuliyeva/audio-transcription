@@ -1,2 +1,4 @@
-ffmpeg
+fastapi
+uvicorn[standard]
+python-multipart
 openai-whisper
