@@ -14,8 +14,6 @@ model = whisper.load_model("base")
 
 tasks = {}
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
 def run_whisper_task(task_id: str, file_path: str):
     try:
         tasks[task_id] = {"status": "processing", "result": None}
@@ -48,3 +46,5 @@ async def get_status(task_id: str):
     if not task:
         return JSONResponse(status_code=404, content={"message": "Task not found"})
     return task
+
+app.mount("/", StaticFiles(directory="static", html=True), name="static")
