@@ -3,6 +3,7 @@ import uuid
 import whisper
 from fastapi import FastAPI, UploadFile, File, BackgroundTasks
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
@@ -13,6 +14,8 @@ model = whisper.load_model("base")
 
 tasks = {}
 
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 def run_whisper_task(task_id: str, file_path: str):
     try:
         tasks[task_id] = {"status": "processing", "result": None}
@@ -21,8 +24,8 @@ def run_whisper_task(task_id: str, file_path: str):
 
         tasks[task_id] = {"status": "completed", "result": result["text"]}
 
-        # if os.path.exists(file_path):
-        #     os.remove(file_path)
+        if os.path.exists(file_path):
+            os.remove(file_path)
     except Exception as e:
         tasks[task_id] = {"status": "error", "error": str(e)}
 

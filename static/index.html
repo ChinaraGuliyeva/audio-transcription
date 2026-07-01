@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio transcription</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./style.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <div class="card-wrap">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h4 class="card-title mb-3">Please upload audio or video for transcription</h4>
+
+                <form id="uploadForm">
+                    <div class="mb-3">
+                        <label for="audioFile" class="form-label">Select file</label>
+                        <input class="form-control" type="file" id="audioFile" accept="audio/*,video/*" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100" id="submitBtn">
+                        <span id="submitBtnText">Upload</span>
+                        <span id="submitSpinner" class="spinner-border spinner-border-sm ms-2 d-none"
+                            role="status"></span>
+                    </button>
+                </form>
+
+                <div id="resultBox" class="mt-4 d-none border rounded bg-light"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger">Error</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="errorModalText" class="mb-0">Something went wrong.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <script async defer src="./index.js"></script>
+
+</body>
+
+</html>
