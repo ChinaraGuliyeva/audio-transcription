@@ -1,1 +1,1 @@
-A script for transcribing audio to text. Needs ffmpeg
+A script for transcribing audio to text. Written for educational purposes to learn how to integrate LLMs into the backend.
