@@ -27,6 +27,11 @@ def run_whisper_task(task_id: str, file_path: str):
     except Exception as e:
         tasks[task_id] = {"status": "error", "error": str(e)}
 
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
 @app.post("/upload")
 async def upload_and_start(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
     task_id = str(uuid.uuid4())
