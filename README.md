@@ -2,4 +2,4 @@ An app for transcribing audio/video to text. Written for educational purposes to
 
 The LLM might hallucinate because of the sound quality. Working on this.
 
-You can try it out via link: [huggingface.co/spaces/hackHackXanum/audio-transcriptio](https://huggingface.co/spaces/hackHackXanum/audio-transcription).
+You can try it out via link: [hackHackXanum-audio-transcription.hf.space](https://hackHackXanum-audio-transcription.hf.space).
