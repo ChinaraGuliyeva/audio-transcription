@@ -28,8 +28,8 @@ def run_whisper_task(task_id: str, file_path: str):
         tasks[task_id] = {"status": "error", "error": str(e)}
 
 
-@app.get("/health")
-def health():
+@app.api_route("/health", methods=["GET", "HEAD"])
+async def health_check():
     return {"status": "ok"}
 
 @app.post("/upload")
