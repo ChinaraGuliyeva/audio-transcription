@@ -1,31 +1,42 @@
+import logging
 import os
 import uuid
+from pathlib import Path
+
 import whisper
-from fastapi import FastAPI, UploadFile, File, BackgroundTasks
+from fastapi import BackgroundTasks, FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s | %(message)s",
+)
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
 UPLOAD_DIR = "temp_audio"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
+logger.info("Loading whisper model...")
 model = whisper.load_model("base")
+logger.info("Model is loaded")
 
 tasks = {}
 
-def run_whisper_task(task_id: str, file_path: str):
+def run_whisper_task(task_id: str, file_path: str) -> None:
+    tasks[task_id] = {"status": "processing", "result": None}
     try:
-        tasks[task_id] = {"status": "processing", "result": None}
-
         result = model.transcribe(file_path)
-
+    except Exception:
+        logger.exception("Transcription failed, task_id=%s", task_id)
+        tasks[task_id] = {"status": "error", "error": "Transcription failed"}
+    else:
         tasks[task_id] = {"status": "completed", "result": result["text"]}
-
-        if os.path.exists(file_path):
-            os.remove(file_path)
-    except Exception as e:
-        tasks[task_id] = {"status": "error", "error": str(e)}
+    finally:
+        Path(file_path).unlink(missing_ok=True)
 
 
 @app.api_route("/health", methods=["GET", "HEAD"])
