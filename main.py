@@ -1,5 +1,6 @@
 import logging
 import os
+import subprocess
 import uuid
 from pathlib import Path
 
@@ -26,10 +27,43 @@ logger.info("Model is loaded")
 
 tasks = {}
 
+AUDIO_FILTERS = (
+    "highpass=f=100,"
+    "afftdn=nf=-25,"
+    "loudnorm=I=-16:TP=-1.5:LRA=11,"
+    "silenceremove=start_periods=1:start_duration=0.1:start_threshold=-45dB:detection=peak,"
+    "areverse,"
+    "silenceremove=start_periods=1:start_duration=0.1:start_threshold=-45dB:detection=peak,"
+    "areverse"
+)
+
+# TO DO: Investigate this and refactor if possible
+def preprocess_audio(input_path: str, output_path: str) -> None:
+    subprocess.run(
+        [
+            "ffmpeg", "-y", "-i", input_path,
+            "-af", AUDIO_FILTERS,
+            "-ar", "16000", "-ac", "1",
+            output_path,
+        ],
+        check=True,
+        capture_output=True,
+    )
+
+# TO DO: Investigate this and refactor if possible
 def run_whisper_task(task_id: str, file_path: str) -> None:
     tasks[task_id] = {"status": "processing", "result": None}
+    clean_path = f"{file_path}.clean.wav"
     try:
-        result = model.transcribe(file_path)
+        preprocess_audio(file_path, clean_path)
+        result = model.transcribe(
+            clean_path,
+            temperature=0.1,
+            condition_on_previous_text=False,
+            no_speech_threshold=0.6,
+            logprob_threshold=-1.0,
+            compression_ratio_threshold=2.4,
+        )
     except Exception:
         logger.exception("Transcription failed, task_id=%s", task_id)
         tasks[task_id] = {"status": "error", "error": "Transcription failed"}
@@ -37,6 +71,7 @@ def run_whisper_task(task_id: str, file_path: str) -> None:
         tasks[task_id] = {"status": "completed", "result": result["text"]}
     finally:
         Path(file_path).unlink(missing_ok=True)
+        Path(clean_path).unlink(missing_ok=True)
 
 
 @app.get("/health")
