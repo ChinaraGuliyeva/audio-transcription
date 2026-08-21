@@ -39,7 +39,7 @@ def run_whisper_task(task_id: str, file_path: str) -> None:
         Path(file_path).unlink(missing_ok=True)
 
 
-@app.api_route("/health", methods=["GET", "HEAD"])
+@app.get("/health")
 async def health_check():
     return {"status": "ok"}
 
